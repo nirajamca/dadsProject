@@ -10,15 +10,27 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
+import os
+
+print("Checking for file already in downloads...")
+
+if os.path.exists("/Users/richardthomas/Downloads/ProofOfCoverageReport.xlsx"):
+    os.remove("/Users/richardthomas/Downloads/ProofOfCoverageReport.xlsx")
+    print("File detected, deleting file...")
+else:
+    print("The file does not exist")
 
 correctMonth = False
 correctYear = False
-
+monthChar = ""
+inputYear = 0
 # Ask user for month
 while correctMonth is not True:
     inputMonth = input("Month: ")
+    monthChar = inputMonth[0:3].upper()
+
     # Select month user typed
-    match inputMonth:
+    match monthChar:
         case "JAN":
             correctMonth = True
         case "FEB":
@@ -56,6 +68,9 @@ while correctYear is not True:
         print("Invalid Year. Please try again with format YYYY")
         continue
 
+# User email to send to
+inputEmail = input("Email: ")
+
 # Set driver to use Chrome
 chromedriver_autoinstaller.install()
 myDriver = webdriver.Chrome()
@@ -71,25 +86,25 @@ expirationDate.click()
 # Select year user typed
 match inputYear:
     case "2023":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[1]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[1]').click()
     case "2022":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[2]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[2]').click()
     case "2021":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[3]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[3]').click()
     case "2020":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[4]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[4]').click()
     case "2019":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[5]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[5]').click()
     case "2018":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[6]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[6]').click()
     case "2017":
-        selectYear = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[7]')
+        myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddYear"]/option[7]').click()
 
 # Click respective year
-selectYear.click()
+
 
 # Select month user typed
-match inputMonth:
+match monthChar:
     case "JAN":
         selectMonth = myDriver.find_element(By.XPATH, '//*[@id="ContentPlaceHolder1_ddMonth"]/option[1]')
         mon = "01"
@@ -166,16 +181,22 @@ sheet_obj.cell(row=1, column=26).value = "Contact Phone"
 sheet_obj.cell(row=1, column=27).value = "Comments"
 
 # Change background of each cell
+sheet_obj.column_dimensions['V'].width = 15
 sheet_obj['V1'].font = Font(size=11, bold=True)
 sheet_obj['V1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
+sheet_obj.column_dimensions['W'].width = 15
 sheet_obj['W1'].font = Font(size=11, bold=True)
 sheet_obj['W1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
+sheet_obj.column_dimensions['X'].width = 15
 sheet_obj['X1'].font = Font(size=11, bold=True)
 sheet_obj['X1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
+sheet_obj.column_dimensions['Y'].width = 15
 sheet_obj['Y1'].font = Font(size=11, bold=True)
 sheet_obj['Y1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
+sheet_obj.column_dimensions['Z'].width = 15
 sheet_obj['Z1'].font = Font(size=11, bold=True)
 sheet_obj['Z1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
+sheet_obj.column_dimensions['AA'].width = 15
 sheet_obj['AA1'].font = Font(size=11, bold=True)
 sheet_obj['AA1'].fill = PatternFill(fill_type='solid', start_color='ffff00', end_color='ffff00')
 
@@ -185,7 +206,7 @@ wb_obj.save(inputYear + '_' + mon + '_JUA_LEADS.xlsx')
 # Email login and the email to send to
 email_user = 'rthomasnegron@gmail.com'
 email_password = 'onltkofdrfwxkrww'
-email_send = 'richard@premierworkerscomp.com'
+email_send = inputEmail
 
 # Subject of the email
 subject = 'JUA Leads ' + inputYear + ' ' + mon
